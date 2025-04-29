@@ -27,6 +27,18 @@ variable "erasure_set_drive_count" {
   default     = ""
 }
 
+variable "storage_class_standard" {
+  type        = string
+  description = "Setting MINIO_STORAGE_CLASS_STANDARD"
+  default     = ""
+}
+
+variable "storage_class_rss" {
+  type        = string
+  description = "Setting MINIO_STORAGE_CLASS_RRS"
+  default     = ""
+}
+
 
 variable "network_name" {
   description = "Docker network name"

@@ -59,6 +59,12 @@ resource "docker_container" "minio_node" {
     ],
     var.erasure_set_drive_count != "" ? [
       "MINIO_ERASURE_SET_DRIVE_COUNT=${var.erasure_set_drive_count}"
+    ] : [],
+    var.storage_class_standard != "" ? [
+      "MINIO_STORAGE_CLASS_STANDARD=${var.storage_class_standard}"
+    ] : [],
+    var.storage_class_rss != "" ? [
+      "MINIO_STORAGE_CLASS_RRS=${var.storage_class_rss}"
     ] : []
   )
 

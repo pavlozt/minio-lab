@@ -1,13 +1,22 @@
-# variables.tf
 variable "cluster_scheme" {
   description = "Minio Cluster scheme"
   type = list(object({
-    name    = string
-    volumes = number
+    name            = string
+    online_volumes  = optional(list(string), [])
+    offline_volumes = optional(list(string), [])
+    volumes         = optional(number)
   }))
+  validation {
+    condition = alltrue([
+      for node in var.cluster_scheme :
+      (node.volumes != null && length(node.online_volumes) == 0 && length(node.offline_volumes) == 0) ||
+      (node.volumes == null && (length(node.online_volumes) + length(node.offline_volumes) > 0))
+    ])
+    error_message = "Each node must specify either 'volumes' or at least one of 'online_volumes'/'offline_volumes', but not both."
+  }
 }
 
-variable "vol_def" {
+variable "volumes_def" {
   type        = string
   description = "Minio Volumes Definition String"
 }
@@ -26,12 +35,12 @@ variable "network_name" {
 }
 
 variable "minio_image" {
-  description = "minio image name"
+  description = "Minio image name"
   type        = string
   default     = "minio/minio:latest"
 }
 variable "minio_client_image" {
-  description = "minio client image name"
+  description = "Minio client image name"
   type        = string
   default     = "minio/mc:latest"
 }

@@ -14,7 +14,7 @@ resource "docker_container" "minio_client" {
   env = [
     "MINIO_ROOT_USER=admin",
     "MINIO_ROOT_PASSWORD=${var.admin_password}",
-    "MINIO_VOLUMES=${var.vol_def}"
+    "MINIO_VOLUMES=${var.volumes_def}"
   ]
   networks_advanced {
     name = docker_network.minio_network.name

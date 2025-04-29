@@ -1,10 +1,9 @@
 cluster_scheme = [
   {
-    name    = "minio1",
-    volumes = 1
+    name = "minio1",
+    online_volumes = ["data1","data2"]
+    offline_volumes = [ ]
   }
 ]
-vol_def = "/mnt/data1"
 
-minio_image        = "minio/minio:RELEASE.2025-04-22T22-12-26Z"
-minio_client_image = "minio/mc:RELEASE.2025-04-16T18-13-26Z"
+volumes_def = "/mnt/data{1...2}"

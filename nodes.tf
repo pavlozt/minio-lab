@@ -2,16 +2,25 @@ resource "docker_network" "minio_network" {
   name = var.network_name
 }
 
+
 resource "docker_volume" "node_volumes" {
   for_each = {
-    for vol in flatten([
-      for node in var.cluster_scheme : [
-        for i in range(node.volumes) : "${node.name}_data${i + 1}"
+    for vol in flatten(
+      [for node in var.cluster_scheme :
+        # Two types of volume specifications are supported
+        node.volumes != null
+        ? [for i in range(1, node.volumes + 1) : {
+          node_name = node.name
+          vol_name  = "data${i}"
+        }]
+        : [for vol_name in concat(node.online_volumes, node.offline_volumes) : {
+          node_name = node.name
+          vol_name  = vol_name
+        }]
       ]
-    ]) : vol => vol
+    ) : "${vol.node_name}_${vol.vol_name}" => vol
   }
-
-  name = each.value
+  name = "${each.value.node_name}_${each.value.vol_name}"
 }
 
 resource "docker_container" "minio_node" {
@@ -35,10 +44,10 @@ resource "docker_container" "minio_node" {
   }
 
   dynamic "volumes" {
-    for_each = range(each.value.node.volumes)
+    for_each = each.value.node.volumes != null ? [for i in range(1, each.value.node.volumes + 1) : "data${i}"] : each.value.node.online_volumes
     content {
-      volume_name    = docker_volume.node_volumes["${each.value.node.name}_data${volumes.key + 1}"].name
-      container_path = "/mnt/data${volumes.key + 1}"
+      volume_name    = docker_volume.node_volumes["${each.value.node.name}_${volumes.value}"].name
+      container_path = "/mnt/${volumes.value}"
     }
   }
 
@@ -46,7 +55,7 @@ resource "docker_container" "minio_node" {
     [
       "MINIO_ROOT_USER=admin",
       "MINIO_ROOT_PASSWORD=${var.admin_password}",
-      "MINIO_VOLUMES=${var.vol_def}"
+      "MINIO_VOLUMES=${var.volumes_def}"
     ],
     var.erasure_set_drive_count != "" ? [
       "MINIO_ERASURE_SET_DRIVE_COUNT=${var.erasure_set_drive_count}"

@@ -26,18 +26,19 @@ This lab enables quick validation of MinIO cluster configurations through infras
 
 1. `vol_def` represent `MINIO_VOLUMES` variable:
    ```hcl
-    vol_def = "http://minio{1...2}/mnt/data{1...4}"
+   volumes_def = "http://minio{1...2}/mnt/data{1...4}"
    ```
 
-1. Other variables typically require minimal adjustments.
-```hcl
-    minio_image        = "minio/minio:RELEASE.2025-04-22T22-12-26Z"
-````
+1. Other variables typically require minimal adjustments. For example, you can use a specific version of MinIO.
+   ```hcl
+   minio_image = "minio/minio:RELEASE.2025-04-22T22-12-26Z"
+   ````
 ## Start up
 
 Just run `terraform init` and `terraform apply`. These commands interact with the Docker daemon and create the necessary objects.
 
 A typical output will indicate which ports to use to access the containers, along with passwords and instructions.
+After this, you can go to the web interface on the first node using the URL: [http://localhost:9000](http://localhost:9000).
 
 The environment includes a MinIO Client (mc) container for cluster management:
 ```
@@ -56,17 +57,34 @@ See the ready-made examples in the [examples/](examples/) directory. The `terraf
 
 ## Failure Simulation Scenarios
 
-### Server failure
+### Server or network failure
 ```
-docker stop 2  # Stop specific node
+docker stop minio2  # Stop specific node
 ```
 
 ### Disk Failure
-1. Access target container:
+
+In this situation, a different definition of `cluster_scheme` is used.
+
+```hcl
+cluster_scheme = [
+  {
+    name = "minio1",
+    online_volumes = ["data1","data2"]
+    offline_volumes = [ ]
+  }
+]
 ```
-docker exec -it minio2 /bin/sh
+
+Move volume to offline_volumes section:
+
+```hcl
+cluster_scheme = [
+  {
+    name = "minio1",
+    online_volumes = ["data1"]
+    offline_volumes = ["data2"]
+  }
+]
 ```
-2. Simulate disk failure:
-```
-rm -rf /mnt/data3  # Remove specific disk(s)
-```
+then run `terraform apply`.

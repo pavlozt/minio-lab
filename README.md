@@ -7,7 +7,7 @@ All implemented using Docker and Terraform.
 
 This lab enables quick validation of MinIO cluster configurations through infrastructure-as-code provisioning. The Terraform-based setup allows simulating real-world failure scenarios to verify cluster resilience.
 
-## Demo
+## Demo session
 
 ![Demo sessions](assets/screencast.gif)
 

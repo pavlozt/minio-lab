@@ -42,7 +42,7 @@ This lab enables quick validation of MinIO cluster configurations through infras
 Just run `terraform init` and `terraform apply`. These commands interact with the Docker daemon and create the necessary objects.
 
 A typical output will indicate which ports to use to access the containers, along with passwords and instructions.
-After this, you can go to the web interface on the first node using the URL: [http://localhost:9000](http://localhost:9000).
+After this, you can go to the web interface on the first node using the URL: [http://localhost:9001](http://localhost:9001).
 
 The environment includes a MinIO Client (mc) container for cluster management:
 ```

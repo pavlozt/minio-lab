@@ -1,7 +1,7 @@
 output "node_access_urls" {
   value = {
     for name, container in docker_container.minio_node :
-    name => "http://localhost:${container.ports[0].external}"
+    name => "http://localhost:${container.ports[1].external}"
   }
 }
 

@@ -31,7 +31,7 @@ resource "docker_container" "minio_node" {
 
   name    = each.value.node.name
   image   = var.minio_image
-  command = ["server", "--console-address", ":9001"]
+  command = ["server", "--address",":9000", "--console-address", ":9001"]
 
   ports {
     internal = 9000

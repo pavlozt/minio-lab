@@ -1,6 +1,7 @@
 #  Ready to interact container with minio client
 
 resource "docker_container" "minio_client" {
+  count      = var.control_container ? 1 : 0
   name       = "mc"
   entrypoint = ["tail", "-f", "/dev/null"] # infinite loop
 
@@ -17,7 +18,7 @@ resource "docker_container" "minio_client" {
     "MINIO_VOLUMES=${var.volumes_def}"
   ]
   networks_advanced {
-    name = docker_network.minio_network.name
+    name = var.network_name
   }
   image = var.minio_client_image
 }

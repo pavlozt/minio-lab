@@ -46,11 +46,18 @@ variable "network_name" {
   default     = "minio_network"
 }
 
+variable "create_network" {
+  description = "Create Docker network"
+  type        = bool
+  default     = true
+}
+
 variable "minio_image" {
   description = "Minio image name"
   type        = string
   default     = "minio/minio:latest"
 }
+
 variable "minio_client_image" {
   description = "Minio client image name"
   type        = string
@@ -67,4 +74,10 @@ variable "base_ui_port" {
   description = "base ui port"
   type        = number
   default     = 9000
+}
+
+variable "control_container" {
+  description = "Create container with pre-configured MinIO client"
+  type        = bool
+  default     = true
 }

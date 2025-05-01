@@ -1,7 +1,7 @@
 resource "docker_network" "minio_network" {
-  name = var.network_name
+  count = var.create_network ? 1 : 0
+  name  = var.network_name
 }
-
 
 resource "docker_volume" "node_volumes" {
   for_each = {
@@ -31,7 +31,7 @@ resource "docker_container" "minio_node" {
 
   name    = each.value.node.name
   image   = var.minio_image
-  command = ["server", "--address",":9000", "--console-address", ":9001"]
+  command = ["server", "--address", ":9000", "--console-address", ":9001"]
 
   ports {
     internal = 9000
@@ -69,7 +69,7 @@ resource "docker_container" "minio_node" {
   )
 
   networks_advanced {
-    name = docker_network.minio_network.name
+    name = var.network_name
   }
 
   restart = "unless-stopped"

@@ -28,7 +28,7 @@ This lab enables quick validation of MinIO cluster configurations through infras
     ]
    ```
 
-1. `vol_def` represent `MINIO_VOLUMES` variable:
+1. `volumes_def` represent `MINIO_VOLUMES` variable:
    ```hcl
    volumes_def = "http://minio{1...2}/mnt/data{1...4}"
    ```

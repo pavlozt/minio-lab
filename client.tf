@@ -7,7 +7,7 @@ resource "docker_container" "minio_client" {
 
   # rendered config from local host
   volumes {
-    host_path      = abspath(local_file.mc_config.filename)
+    host_path      = abspath(local_file.mc_config[0].filename)
     container_path = "/root/.mc/config.json"
     read_only      = true
   }
@@ -25,6 +25,7 @@ resource "docker_container" "minio_client" {
 
 
 resource "local_file" "mc_config" {
+  count      = var.control_container ? 1 : 0
   content = templatefile("${path.module}/templates/mc_config.json.tpl", {
     main_endpoint = "http://minio1:9000"
     access_key    = "admin"
